@@ -4,6 +4,7 @@ import geopandas as gpd
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy.stats
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
@@ -34,7 +35,8 @@ vmin = lower48["DeathRate"].min()
 vmax = lower48["DeathRate"].max()
 
 plt.title("USA: COVID-19 Death Rate",fontdict={'fontsize':20, 'fontweight':'bold'})
-    
+
+# Add color bar to plot, export plot   
 sm = plt.cm.ScalarMappable(norm=plt.Normalize(vmin=vmin, vmax=vmax),cmap='YlOrRd')
 divider = make_axes_locatable(ax)
 cax = divider.append_axes("left", size="2%", pad = 0.05)
@@ -54,6 +56,7 @@ vmax = lower48["Gini"].max()
 
 plt.title("USA: Gini Index",fontdict={'fontsize':20, 'fontweight':'bold'})
     
+# Add color bar to plot, export plot
 sm = plt.cm.ScalarMappable(norm=plt.Normalize(vmin=vmin, vmax=vmax),cmap='YlOrRd')
 divider = make_axes_locatable(ax)
 cax = divider.append_axes("left", size="2%", pad = 0.05)
@@ -62,21 +65,40 @@ fig.colorbar(sm,cax=cax,)
 plt.savefig("Figure2",dpi=400,bbox_inches='tight')
 
 
-# Create a scatterplot comparing the death rate and the Gini index 
+### Create a scatterplot comparing the death rate and the Gini index 
 fig = plt.figure(3, figsize=(12,8))
 
+# Create Initial Scatterplot
 x = lower48.Gini
 y = lower48.DeathRate
 
 plt.scatter(x, y)
 
+# Calculate trend line using numpy and plot the line
 z = np.polyfit(x, y, 1)
 p = np.poly1d(z)
 plt.plot(x,p(x),'-r')
 
+# Adjust visual appearence and labels of plot, export plot
 plt.xlabel('Gini Index', fontdict={'fontsize':12, 'fontweight':'bold'})
 plt.ylabel('Covid Death Rate (%)', fontdict={'fontsize':12, 'fontweight':'bold'})
-
 plt.title("USA: Gini Index vs COVID Death Rate",fontdict={'fontsize':20, 'fontweight':'bold'})
 
 plt.savefig("Figure3",dpi=400,bbox_inches='tight')
+
+### Test the correlation between the Gini Index and the Covid Death Rate
+# Prepare Variables
+x = lower48.Gini
+y = lower48.DeathRate
+
+# Summarize Variables
+print('Data Summary:')
+print('x: mean=%.3f stdv=%.3f' % (np.mean(x), np.std(x)))
+print('y: mean=%.3f stdv=%.3f' % (np.mean(y), np.std(y)))
+print('------------------------------')
+
+# Calculate Pearson's r corelation coefficient & P-value
+print("Statistical Analysis:")
+r = scipy.stats.pearsonr(x, y)
+print("Correlation Coefficient=",r[0])
+print("P-Value =",r[1])
