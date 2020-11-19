@@ -60,8 +60,6 @@ plt.savefig("USAGiniIndex",dpi=400,bbox_inches='tight')
 
 
 # Create a scatterplot comparing the death rate and the Gini index 
-print("Test")
-
-print(lower48.head())
+starting scatterplot
 
 
